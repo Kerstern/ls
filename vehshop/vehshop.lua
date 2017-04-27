@@ -22,6 +22,7 @@ local vehshop = {
 			buttons = {
 				{name = "Vehicles", description = ""},
 				{name = "Motorcycles", description = ""},
+				{name = "Métier", description = ""},
 			}
 		},
 		["vehicles"] = {
@@ -244,6 +245,43 @@ local vehshop = {
 				{name = "Washington", costs = 15000, description = {}, model = "washington"},
 			}
 		},
+		
+		["métier"] = {
+			title = "METIER",
+			name = "métier",
+			buttons = {
+				{name = "Chauffeur de Taxi", description = ''}
+				{name = "Chauffeur de bus", description = ''}
+				{name = "Routier", description = ''}
+				}
+			},
+		["Chauffeur de Taxi"] = {
+			title = "Chauffeur de Taxi",
+			name = "Chauffeur de Taxi",
+			buttons = {
+				{name = "Taxi", costs = 4500, description = {}, model = "TAXI"},
+				}
+			},
+		
+		["Chauffeur de Bus"] = {
+			title = "Chauffeur de Bus",
+			name = "Chauffeur de Bus",
+			buttons = {
+				{name = "Bus", costs = 4500, description = {}, model = "BUS"},
+				}
+			},
+		
+		["Routier"] = {
+			title = "Routier",
+			name = "Routier",
+			buttons = {
+				{name = "Hauler", costs = 4500, description = {}, model = "HAULER"},
+				{name = "Packer", costs = 4500, description = {}, model = "PACKER"},
+				{name = "Phantom", costs = 4500, description = {}, model = "PHANTOM"},
+				}
+			},
+			
+				
 		["motorcycles"] = {
 			title = "MOTORCYCLES",
 			name = "motorcycles",
@@ -655,6 +693,8 @@ function ButtonSelected(button)
 			OpenMenu('vehicles')
 		elseif btn == "Motorcycles" then
 			OpenMenu('motorcycles')
+		elseif btn == "Métier" then
+			OpenMenu('métier')
 		end
 	elseif this == "vehicles" then
 		if btn == "Sports" then
@@ -678,7 +718,17 @@ function ButtonSelected(button)
 		elseif btn == "Vans" then
 			OpenMenu('vans')
 		end
-	elseif this == "compacts" or this == "coupes" or this == "sedans" or this == "sports" or this == "sportsclassics" or this == "super" or this == "muscle" or this == "offroad" or this == "suvs" or this == "vans" or this == "industrial" or this == "cycles" or this == "motorcycles" then
+		
+	elseif this == "Métier" then
+		if btn == "Chauffeur de Taxi" then
+			OpenMenu('Chauffeur de Taxi')
+		elseif btn == "Chauffeur de Bus" then
+			OpenMenu('Chauffeur de Bus')
+		elseif btn == "Routier" then
+			OpenMenu('Routier')
+		end
+	elseif this == "compacts" or this == "coupes" or this == "sedans" or this == "sports" or this == "sportsclassics" or this == "super" or this == "muscle" or this == "offroad" or this == "suvs" or this == "vans" or this == "industrial" or this == "cycles" or this == "motorcycles" 
+		or this == "métier" or this == "Chauffeur de Taxi" or this == "Chauffeur de Bus" or this == "Routier"then
 		TriggerServerEvent('CheckMoneyForVeh',button.model,button.costs)
 	end
 end
@@ -694,6 +744,8 @@ function OpenMenu(menu)
 	fakecar = {model = '', car = nil}
 	vehshop.lastmenu = vehshop.currentmenu
 	if menu == "vehicles" then
+		vehshop.lastmenu = "main"
+	elseif menu == "Métier" then
 		vehshop.lastmenu = "main"
 	elseif menu == "bikes"  then
 		vehshop.lastmenu = "main"
@@ -716,7 +768,7 @@ function Back()
 	backlock = true
 	if vehshop.currentmenu == "main" then
 		CloseCreator()
-	elseif vehshop.currentmenu == "compacts" or vehshop.currentmenu == "coupes" or vehshop.currentmenu == "sedans" or vehshop.currentmenu == "sports" or vehshop.currentmenu == "sportsclassics" or vehshop.currentmenu == "super" or vehshop.currentmenu == "muscle" or vehshop.currentmenu == "offroad" or vehshop.currentmenu == "suvs" or vehshop.currentmenu == "vans" or vehshop.currentmenu == "industrial" or vehshop.currentmenu == "cycles" or vehshop.currentmenu == "motorcycles" then
+	elseif vehshop.currentmenu == "compacts" or vehshop.currentmenu == "coupes" or vehshop.currentmenu == "sedans" or vehshop.currentmenu == "sports" or vehshop.currentmenu == "sportsclassics" or vehshop.currentmenu == "super" or vehshop.currentmenu == "muscle" or vehshop.currentmenu == "offroad" or vehshop.currentmenu == "suvs" or vehshop.currentmenu == "vans" or vehshop.currentmenu == "industrial" or vehshop.currentmenu == "cycles" or vehshop.currentmenu == "motorcycles" or vehshop.currentmenu == "Métier" or vehshop.currentmenu == "Chauffeur de Bus" or vehshop.currentmenu == "Chauffeur de Taxi" or vehshop.currentmenu == "Routier" then
 		if DoesEntityExist(fakecar.car) then
 			Citizen.InvokeNative(0xEA386986E786A54F, Citizen.PointerValueIntInitialized(fakecar.car))
 		end
