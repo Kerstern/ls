@@ -125,7 +125,7 @@ function init()
     SetBlipSprite(BLIP.company, 67)
     SetBlipDisplay(BLIP.company, 4)
     SetBlipScale(BLIP.company, 0.8)
-    Citizen.Trace("Truck Blip added.")
+    Citizen.Trace("Blip de camion ajouté.")
    -- GUI.loaded = true
 end
 
@@ -181,21 +181,21 @@ function tick()
 
         MISSION.markerUpdate(IsEntityAttached(MISSION.trailer))
         if( IsEntityAttached(MISSION.trailer) and text1 == false) then
-            TriggerEvent("mt:missiontext", "Drive to the marked ~g~destination~w~.", 10000)
+            TriggerEvent("mt:missiontext", "Conduisez jusqu'à la ~g~destination~w~.", 10000)
             text1 = true
         elseif( not IsEntityAttached(MISSION.trailer) and text2 == false ) then
-            TriggerEvent("mt:missiontext", "Attach the ~o~trailer~w~.", 15000)
+            TriggerEvent("mt:missiontext", "Attachez la ~o~remorque~w~.", 15000)
             text2 = true
         end
         Wait(2000)
         local trailerCoords = GetEntityCoords(MISSION.trailer, 0)
         if ( GetDistanceBetweenCoords(currentMission[1], currentMission[2], currentMission[3], trailerCoords ) < 25 and  not IsEntityAttached(MISSION.trailer)) then
 						TriggerServerEvent("truckerJob:addMoney", tonumber(currentMission[4]))
-            TriggerEvent("mt:missiontext", "You gained ~g~$"..currentMission[4], 5000)
+            TriggerEvent("mt:missiontext", "Vous avez gagné ~g~$"..currentMission[4], 5000)
             MISSION.removeMarker()
             clear()
         elseif ( GetDistanceBetweenCoords(currentMission[1], currentMission[2], currentMission[3], trailerCoords ) < 25 and IsEntityAttached(MISSION.trailer) ) then
-            TriggerEvent("mt:missiontext", "Arrived. Detach your ~o~trailer~w~ with ~r~H~w~", 15000)
+            TriggerEvent("mt:missiontext", "Vous êtes arrivé. Détachez la ~o~remorque~w~ avec ~r~H~w~", 15000)
         end
 
         if ( IsEntityDead(MISSION.trailer) or IsEntityDead(MISSION.truck) ) then
@@ -310,7 +310,7 @@ end
 ---------------------------------------
 ---------------------------------------
 function GUI.drawStartText()
-    TriggerEvent("mt:missiontext", "You want to be a trucker? Press ~r~N+~w~ to start.", 500)
+    TriggerEvent("mt:missiontext", "Vous voulez être routier ? Apuuyez sur ~r~N+~w~ pour commencer.", 500)
     --GUI.showStartText = true
 end
 
@@ -322,8 +322,8 @@ end
 
 function GUI.init()
     GUI.loaded = true
-    GUI.addTitle("You're a trucker now.", 0.425, 0.19, 0.45, 0.07 )
-    GUI.addDesc("Choose a trailer.", 0.575, 0.375, 0.15, 0.30 )
+    GUI.addTitle("Vous êtes maintenant routier.", 0.425, 0.19, 0.45, 0.07 )
+    GUI.addDesc("Choisissez une remorque.", 0.575, 0.375, 0.15, 0.30 )
 
     --menu, title, function, position
     GUI.addButton(0, "RON Tanker trailer", GUI.optionMisson, 0.35, 0.25, 0.3, 0.05 )
@@ -335,12 +335,9 @@ function GUI.init()
 
     GUI.buttonCount = 0
 
-    GUI.addButton(1, "Mission 1 [ 5.000$ ]", GUI.mission, 0.35, 0.25, 0.3, 0.05)
-    GUI.addButton(1, "Mission 2 [ 10.000$ ]", GUI.mission, 0.35, 0.30, 0.3, 0.05)
-    GUI.addButton(1, "Mission 3 [ 15.000$ ]", GUI.mission, 0.35, 0.35, 0.3, 0.05)
-    GUI.addButton(1, "Mission 4 [ 20.000$ ]", GUI.mission, 0.35, 0.40, 0.3, 0.05)
-    GUI.addButton(1, "Mission 5 [ 30.000$ ]", GUI.mission, 0.35, 0.45, 0.3, 0.05)
-    GUI.addButton(1, "For Testing! [ 1.337$ ]", GUI.mission, 0.35, 0.50, 0.3, 0.05)
+    GUI.addButton(1, "Mission 1 [ 1.500$ ]", GUI.mission, 0.35, 0.25, 0.3, 0.05)
+    GUI.addButton(1, "Mission 2 [ 1.500$ ]", GUI.mission, 0.35, 0.30, 0.3, 0.05)
+    GUI.addButton(1, "Mission 3 [ 2.500$ ]", GUI.mission, 0.35, 0.35, 0.3, 0.05)
     GUI.addButton(1, "Exit Menu", GUI.exit, 0.35, 0.55, 0.3, 0.05)
 end
 
