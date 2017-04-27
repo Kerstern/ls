@@ -1,28 +1,34 @@
-local truckers_jobs = {
-	['trucker1'] = {
-		["name"] = "liqour ace",
-		["start"] = {['x'] = 814.87, ['y'] = -1664.11, ['z'] = 29.38},
-		["end"] = {['x'] = -654.59, ['y'] = 308.81, ['z'] = 82.90},
-		["payment"] = 2500
-	},
-	['trucker2'] = {
-		["name"] = "warehouse",
-		["start"] = {['x'] = 814.87, ['y'] = -1664.11, ['z'] = 29.38},
-		["end"] = {['x'] = -654.59, ['y'] = 308.81, ['z'] = 82.90},
-		["payment"] = 1500
-	},
-	['trucker3'] = {
-		["name"] = "warehouse2",
-		["start"] = {['x'] = 814.87, ['y'] = -1664.11, ['z'] = 29.38},
-		["end"] = {['x'] = -654.59, ['y'] = 308.81, ['z'] = 82.90},
-		["payment"] = 1500
-	}
-}
-
+-- Position de la compagnie de routier
 local trucker_locations = {
 	{name="Mission camions", id=162, x= 814.87, y= -1664.11, z= 29.38},
 	{name="Mission camions", id=162, x= 814.87, y= -1664.11, z= 29.38},
 	{name="Mission camions", id=162, x= 814.87, y= -1664.11, z= 29.38},
+}
+
+
+-- Missions Routier
+local MissionRoutier = {
+	
+	['mission1'] = {
+		["name"] = "Mission 1",
+		["start"] = {['x'] = 814.879, ['y'] = -1664.115, ['z'] = 29.381},
+		["end"] = {['x'] = -654.597, ['y'] = 308.810, ['z'] = 82.900},
+		["payment"] = 1500
+		},
+	
+	['mission2'] = {
+		["name"] = "Mission 2",
+		["start"] = {['x'] = 814.879, ['y'] = -1664.115, ['z'] = 29.381},
+		["end"] = {['x'] = -1092.924, ['y'] = -2052.076, ['z'] = 13.291},
+		["payment"] = 1500
+		},
+	
+	['mission3'] = {
+		["name"] = "Mission 3",
+		["start"] = {['x'] = 814.879, ['y'] = -1664.115, ['z'] = 29.381},
+		["end"] = {['x'] = 2354.301, ['y'] = 3133.806, ['z'] = 48.208},
+		["payment"] = 2500
+		},
 }
 
 function DisplayHelpText(str)
@@ -31,23 +37,30 @@ function DisplayHelpText(str)
 	DisplayHelpTextFromStringLabel(0, 0, 1, -1)
 end
 
-RegisterNetEvent('es_jobs:jobTruckerDone')
-AddEventHandler('es_jobs:jobTruckerDone', function()
-	TriggerServerEvent('es_jobs:jobTruckerDone', GetVehiclePedIsIn(GetPlayerPed(-1), false))
-end)
 
-RegisterNetEvent('es_jobs:startTruckerJob')
-AddEventHandler('es_jobs:startTruckerJob', function()
+
+
+RegisterNetEvent('missionRoutierFinie')
+AddEventHandler('missionRoutierFinie', function()
+	TriggerServerEvent('missionRoutierFinie', GetVehiclePedIsIn(GetPlayerPed(-1), false))
+end)
+	
+
+
+RegisterNetEvent('startMissionRoutier')
+AddEventHandler('startMissionRoutier', function()
 	local vehicle = GetVehiclePedIsIn(GetPlayerPed(-1), false)
-	TriggerServerEvent('es_jobs:startTruckerJob', vehicle, GetDisplayNameFromVehicleModel(GetEntityModel(vehicle)))
+	TriggerServerEvent('startMissionRoutier', vehicle, GetDisplayNameFromVehicleModel(GetEntityModel(vehicle)))
 end)
 
-local trucker_blip
+
+
+local blip_routier
 local markers = {}
 curJob = ""
 local trucking_marker
 
-local displayDoneMission = false
+local displayMissionTerminee = false
 
 local function drawTxt(x,y ,width,height,scale, text, r,g,b,a, outline, center)
     SetTextFont(0)
@@ -68,17 +81,18 @@ local function drawTxt(x,y ,width,height,scale, text, r,g,b,a, outline, center)
     DrawText(x - width/2, y - height/2 + 0.005)
 end
 
-RegisterNetEvent("es_jobs:setCurrentJob")
-AddEventHandler("es_jobs:setCurrentJob", function(j)
+RegisterNetEvent("setCurrentJob")
+AddEventHandler("setCurrentJob", function(j)
 	curJob = j
 
 	if(trucking_marker)then
-		TriggerServerEvent("es_jobs:cancelTrucking")
+		TriggerServerEvent("cancelTrucking")
 	end
 end)
 
-RegisterNetEvent('es_jobs:createMarkerTrucker')
-AddEventHandler('es_jobs:createMarkerTrucker', function(id, x, y, z, dr)
+
+RegisterNetEvent('createMarkerRoutier')
+AddEventHandler('createMarkerRoutier', function(id, x, y, z, dr)
 	trucking_marker = {['x'] = x, ['y'] = y, ['z'] = z}
 	trucker_blip = AddBlipForCoord(x,  y,  z)
 	SetBlipRoute(trucker_blip, true)
@@ -90,186 +104,3 @@ end)
 
 local rt
 local curMsg = "SHOW_MISSION_PASSED_MESSAGE"
-
-RegisterNetEvent('es_jobs:removeMarkerTrucker')
-AddEventHandler('es_jobs:removeMarkerTrucker', function(id, complete)
-	trucking_marker = nil
-	Citizen.InvokeNative(0x86A652570E5F25DD, Citizen.PointerValueIntInitialized(trucker_blip))
-
-	DecorSetInt(GetVehiclePedIsIn(GetPlayerPed(-1), false), "drugs", 0)
-
-	if(complete) then
-		Citizen.CreateThread(function()
-			RegisterScriptWithAudio(0)
-			SetAudioFlag("AvoidMissionCompleteDelay", true)
-			PlayMissionCompleteAudio("FRANKLIN_BIG_01")
-			curMsg = "SHOW_MISSION_PASSED_MESSAGE"
-			rt = RequestScaleformMovie("MP_BIG_MESSAGE_FREEMODE")
-			StartScreenEffect("SuccessFranklin",  6000,  false)
-			displayDoneMission = true
-		end)
-	end
-end)
-
-local possibleCargo = {
-	{
-		type = 0,
-		name = "Shipment",
-		vehicle = "mule"
-	},
-	{
-		type = 1,
-		name = "Xin's Package",
-		vehicle = "mule"
-	}
-}
-
-Citizen.CreateThread(function()
-    for _, item in pairs(trucker_locations) do
-      item.blip = AddBlipForCoord(item.x, item.y, item.z)
-      SetBlipSprite(item.blip, item.id)
-      SetBlipAsShortRange(item.blip, true)
-      BeginTextCommandSetBlipName("STRING")
-      AddTextComponentString(item.name)
-      EndTextCommandSetBlipName(item.blip)
-    end
-	
-	while true do
-		if displayDoneMission then
-			Citizen.Wait(5000)
-			curMsg = "TRANSITION_OUT"
-			PushScaleformMovieFunction(rt, "TRANSITION_OUT")
-			PopScaleformMovieFunction()
-			Citizen.Wait(2000)
-			displayDoneMission = false
-		end
-
-		Citizen.Wait(0)
-	end
-end)
-
-local selected = 1
-
-DecorRegister("drugs", 3)
-
-Citizen.CreateThread(function()
-	while true do
-		Citizen.Wait(0)
-		if(HasScaleformMovieLoaded(rt) and displayDoneMission)then
-			HideHudComponentThisFrame(7)
-			HideHudComponentThisFrame(8)
-			HideHudComponentThisFrame(9)
-			HideHudComponentThisFrame(6)
-			HideHudComponentThisFrame(19)
-			HideHudAndRadarThisFrame()
-
-			if(curMsg == "SHOW_MISSION_PASSED_MESSAGE")then
-				PushScaleformMovieFunction(rt, curMsg)
-	 
-				
-				BeginTextComponent("STRING")
-				AddTextComponentString("Goods delivered")
-				EndTextComponent()
-				BeginTextComponent("STRING")
-				AddTextComponentString("Hmmmm")
-				EndTextComponent()
-
-				PushScaleformMovieFunctionParameterInt(145)
-				PushScaleformMovieFunctionParameterBool(true)
-				PushScaleformMovieFunctionParameterInt(1)
-				PushScaleformMovieFunctionParameterBool(false)
-				PushScaleformMovieFunctionParameterInt(69)
-
-				PopScaleformMovieFunctionVoid()
-
-				Citizen.InvokeNative(0x61bb1d9b3a95d802, 1)
-			end
-			
-			DrawScaleformMovieFullscreen(rt, 255, 255, 255, 255)
-		end
-
-		local pos = GetEntityCoords(GetPlayerPed(-1), false)
-		
-		if(curJob == "police")then
-			if(IsPedInAnyVehicle(GetPlayerPed(-1), false))then
-				local veh = GetVehiclePedIsIn(GetPlayerPed(-1), false)
-				if DecorGetInt(veh, "drugs") == 1 then
-					drawTxt(0.896, 1.420, 1.0,1.0,0.61, "You notice a package of drugs in the back.", 255, 255, 255, 255, false, true)
-				end
-			end
-		end
-
-		for k,v in ipairs(trucker_locations) do
-			if(Vdist(v.x, v.y, v.z, pos.x, pos.y, pos.z) < 100.0)then
-			DrawMarker(1, v.x, v.y, v.z - 1, 0, 0, 0, 0, 0, 0, 3.0001, 3.0001, 1.2001, 0, 0, 0,155, 0,0, 0,0)
-
-			local pos = GetEntityCoords(GetPlayerPed(-1), false)
-				if(Vdist(v.x, v.y, v.z, pos.x, pos.y, pos.z) < 5.0)then
-					if(curJob == "trucker")then
-						if(trucking_marker ~= nil)then
-							DisplayHelpText("Press ~INPUT_CONTEXT~ to cancel current trucking mission.")
-							if(IsControlJustPressed(1, 51)) then -- Up
-								TriggerServerEvent("es_jobs:cancelTrucking")
-							end
-						else
-							DisplayHelpText("Controls ~INPUT_CELLPHONE_UP~ ~INPUT_CELLPHONE_DOWN~ ~INPUT_CELLPHONE_RIGHT~")
-
-							DrawRect(0.127, 0.108, 0.225, 0.08, 0, 0, 0, 100)
-							drawTxt(0.626, 0.560, 1.0,1.0,0.81, "Choose Cargo", 255, 255, 255, 255, false, true)
-							drawTxt(0.515, 0.610, 1.0,1.0,0.41, "Option", 200, 200, 200, 255)
-							drawTxt(0.680, 0.610, 1.0,1.0,0.41, "Desc", 200, 200, 200, 255)
-							for c,e in ipairs(possibleCargo)do
-								if(c ~= selected)then
-									DrawRect(0.127, 0.12939 + (c * 0.037),  0.225,  0.037,  100,  100, 100,  200)
-								end
-								DrawRect(0.127, 0.12939 + (selected * 0.037),  0.225,  0.037,  200,  200, 200,  200)
-								drawTxt(0.515, 0.61 + (c * 0.037), 1.0,1.0,0.37, "" .. e.name, 255, 255, 255, 255, true)
-								if(e.type == 1)then
-									drawTxt(0.682, 0.61 + (c * 0.037), 1.0,1.0,0.37, "Illegal", 200, 0, 0, 255, true)
-								else
-									drawTxt(0.682, 0.61 + (c * 0.037), 1.0,1.0,0.37, "Legal", 0, 200, 0, 255, true)
-								end
-							end
-
-							DisableControlAction(1, 27, true)
-							if(IsControlJustPressed(1, 172)) then -- Up
-								if(selected ~= 1)then
-									selected = selected - 1
-								end
-							elseif(IsControlJustPressed(1, 173)) then -- Down
-								if(selected ~= #possibleCargo)then
-									selected = selected + 1
-								end
-							end
-
-							if(IsControlJustReleased(1, 175))then
-								TriggerServerEvent('es_jobs:triggerTrucking', possibleCargo[selected].type)
-							end
-						end
-					else
-						DisplayHelpText("You need to be a ~HUD_COLOUR_RED~trucker~HUD_COLOUR_WHITE~ to do this job.")
-					end
-				end
-			end
-		end
-	end
-end)
-
-Citizen.CreateThread(function()
-	while true do
-		local pos = GetEntityCoords(GetPlayerPed(-1), true)
-
-		if(trucking_marker)then
-			if(Vdist(trucking_marker.x, trucking_marker.y, trucking_marker.z, pos.x, pos.y, pos.z) < 100.0)then
-				DrawMarker(1, trucking_marker.x, trucking_marker.y, trucking_marker.z - 1, 0, 0, 0, 0, 0, 0, 3.0001, 3.0001, 0.8001, 255, 165, 0,155, 0,0, 0,0)
-				if(Vdist(trucking_marker.x, trucking_marker.y, trucking_marker.z, pos.x, pos.y, pos.z) < 7.0)then
-					DisplayHelpText("Press ~INPUT_CONTEXT~ to finish a ~y~trucking~w~ mission.")
-					if(IsControlJustReleased(1, 51))then
-						TriggerServerEvent('es_jobs:triggerTrucking', 0)
-					end
-				end
-			end
-		end
-		Citizen.Wait(0)
-	end
-end)
