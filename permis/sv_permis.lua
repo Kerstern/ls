@@ -14,6 +14,10 @@ AddEventHandler('permis:licence', function(id)
         local player = user.identifier
         local namePermis = namePermis(id)
         updatelicence(player, id)
-        TriggerClientEvent("es_freeroam:notify", source, "CHAR_MP_STRIPCLUB_PR", 1, "Auto-Ecole", false, "Félicitations, vous avez votre permis !")
-  end)
+        end)
 end)
+
+RegisterServerEvent('licence:complete')
+AddEventHandler('licence:complete', function()
+    TriggerClientEvent("es_freeroam:notify", source, "CHAR_MP_STRIPCLUB_PR", 1, "Auto-Ecole", false, "Félicitations, vous avez votre permis !")
+  end)
