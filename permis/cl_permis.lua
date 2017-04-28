@@ -2,8 +2,9 @@ local Permis = {
   {name="Auto-Ecole", colour=15, id=351, x=-266.94, y=-960.744, z=31.2231},
   }
 
-local licence = {
-  {name = "Permis B", id=1},
+local voiture = { hash=0xEB70965F, x= , y= , z= , a= }
+
+local licence = { name = "Permis B", id=1 }
   
 
  function drawTxt(text,font,centre,x,y,scale,r,g,b,a)
@@ -75,3 +76,16 @@ Citizen.CreateThread(function()
   end
 end)
   
+AddEventHandler('permis:licence', function()
+RequestModel(0xEB70965F) -- Blista
+while not HasModelLoaded(0xEB70965F) do
+	Wait(1)
+end
+
+-- Spawn la voiture
+for _, item in pairs(voiture) do
+	cab =  CreateVehicle(item.hash, item.x, item.y, item.z, item.a, false, false)
+	SetVehicleOnGroundProperly(voitur)
+end
+
+end)
