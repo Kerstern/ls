@@ -4,7 +4,7 @@ MySQL:open("localhost", "gta5_gamemode_essential", "root", "password")
 
 function updatelicence(player, id)
   local licence = id
-  MySQL:executeQuery("UPDATE users SET `licencea`='@value' WHERE identifier = '@identifier'", {['@value'] = licence, ['@identifier'] = player})
+  MySQL:executeQuery("UPDATE users SET `licence`='@value' WHERE identifier = '@identifier'", {['@value'] = licence, ['@identifier'] = player})
 end
 
 
