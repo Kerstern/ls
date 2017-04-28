@@ -3,8 +3,7 @@ local Permis = {
   }
 
 local licence = {
-  {name = "Permis A", id=1},
-  {name = "Permis B", id=2},
+  {name = "Permis B", id=1},
   
 
  function drawTxt(text,font,centre,x,y,scale,r,g,b,a)
